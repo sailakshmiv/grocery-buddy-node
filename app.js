@@ -10,11 +10,12 @@ var app = express();
 var helenus = require('helenus'),
     pool = new helenus.ConnectionPool({
       hosts      : ['localhost:9160'],
-      keyspace   : 'groceries',
+      keyspace   : 'grocerybuddy',
       cqlVersion : '3.0.0'
-    });
+    }),
+    uuid = require('node-uuid');
 
-pool.connect(function(err){
+pool.connect(function(err, keyspace){
   if(err){
     throw(err);
   }
@@ -22,6 +23,7 @@ pool.connect(function(err){
   app.configure(function(){
     app.set('port', process.env.PORT || 3000);
     app.set('cassandra', pool);
+    app.set('uuid', uuid);
     app.set('view engine', 'jade');
     app.set('views', __dirname + '/views');
     app.use(express.logger('dev'));
@@ -42,6 +44,7 @@ pool.connect(function(err){
   // Users
   app.get('/users', users.index);
   app.post('/users', users.add);
+  app.get('/logout', users.logout);
 
   // Groceries
   app.get('/groceries', groceries.index);

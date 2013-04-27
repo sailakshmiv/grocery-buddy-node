@@ -1,37 +1,106 @@
 exports.index = function(req, res, next){
-	var select = 'SELECT * FROM lists';
+	if (req.app.get('user_id') === undefined) {
+		res.render('index', {title: 'Login', error_msg: 'Please log in.'});
+	}
 
-	req.app.get('cassandra').cql(select, function(err, groceries){
+	var select = "SELECT item_id FROM Userlists WHERE user_id=" + req.app.get('user_id');
+
+	req.app.get('cassandra').cql(select, function(err, rows){
 		if(err){
 			next(err);
 		}
 
-		res.render('groceries/index', { title: 'Your Groceries', groceries: groceries });
+		var items = [];
+		if (rows.length > 0) {
+			rows.forEach(function(row){
+				//all row of result
+				row.forEach(function(name,value,ts,ttl){
+					//all column of row
+					items.push(value);
+				});
+			});
+		}
+
+		var select2 = "SELECT * FROM Groceries WHERE item_id IN(" + items.join() + ")";
+
+		req.app.get('cassandra').cql(select2, function(err, rows2){
+			if(err){
+				next(err);
+			}
+
+			res.render('groceries/index', { 
+				title: 'Groceries for ' + req.app.get('user_email'),
+				groceries: rows2
+			});
+		});
 	});
 }
 
 exports.add = function(req, res, next){
-	var insert = 'INSERT INTO lists (name, price, image, user_email) VALUES (?,?,?,?)',
-		params = [req.body.name, parseFloat(req.body.price), req.body.image, 'jjc4fb@virginia.edu'];
+	var uuid = req.app.get('uuid').v1();
 
-	req.app.get('cassandra').cql(insert, params, function(err){
+	var insert = "INSERT INTO Groceries (item_id, name, price, image, user_id) VALUES("
+		+ uuid + ",'" + req.body.name + "','" + req.body.price
+		+ "','" + req.body.image + "'," + req.app.get('user_id') + ")";
+
+	req.app.get('cassandra').cql(insert, function(err, rows){
 		if(err){
 			next(err);
 		}
 
-		res.redirect('/groceries');
+		console.log("Added grocery item[" + uuid + ", " + req.body.name);
+
+		var insert2 = "INSERT INTO Userlists (user_id, item_id) VALUES("
+			+ req.app.get('user_id') + "," + uuid + ")";
+
+		req.app.get('cassandra').cql(insert2, function(err, rows){
+			if(err){
+				next(err);
+			}
+
+			console.log("Added grocery item to user " + req.app.get('user_id'));
+			res.redirect('/groceries');
+		});
 	});
 }
 
 exports.delete = function(req, res, next){
-	var remove = 'DELETE FROM lists WHERE user_email=?',
-		params = ['jjc4fb@virginia.edu'];
+	var select = "SELECT item_id FROM Userlists WHERE user_id=" + req.app.get('user_id');
 
-	req.app.get('cassandra').cql(remove, params, function(err, groceries){
+	req.app.get('cassandra').cql(select, function(err, rows){
 		if(err){
 			next(err);
 		}
 
-		res.redirect('/groceries');
+		var items = [];
+		if (rows.length > 0) {
+			rows.forEach(function(row){
+				//all row of result
+				row.forEach(function(name,value,ts,ttl){
+					//all column of row
+					items.push(value);
+				});
+			});
+		}
+
+		var del = "DELETE FROM Userlists WHERE user_id=" + req.app.get('user_id');
+		req.app.get('cassandra').cql(del, function(err){
+			if(err){
+				next(err);
+			}
+
+			console.log("Cleared items from user " + req.app.get('user_id'));
+
+			var del2 = "DELETE FROM Groceries WHERE item_id IN(" + items.join() + ")";
+			req.app.get('cassandra').cql(del2, function(err){
+				if(err){
+					next(err);
+				}
+
+				console.log("Cleared items from global list");
+
+				res.redirect('/groceries');
+			});
+		});
 	});
 }
