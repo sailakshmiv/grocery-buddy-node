@@ -6,7 +6,7 @@ An app to manage your grocery list! Written using nodejs with an apache cassandr
 
 ### Clone this repo
 
-	git clone git@github.com:jaredculp/grocery-buddy.git
+	git clone git@github.com:jaredculp/grocery-buddy-node.git
 
 Make sure you have nodejs and npm (comes with nodejs) installed.
 
