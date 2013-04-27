@@ -1,0 +1,14 @@
+extends ../layout
+
+div.container
+block content
+  h1= title
+
+  form(action='/users', method='post')
+    tbody
+      tr
+        td: input(id='email',type='text',placeholder='Email address',name='email')
+        br
+        td: input(id='password',type='password',placeholder='Password',name='password')
+        br
+        td: input.btn.btn-primary(type='submit',value='Submit',data-transition='fade', data-theme='c')

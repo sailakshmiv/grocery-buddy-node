@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  div.container
+
+    h1= title
+    p Welcome to Grocery Buddy!
+
+    p.text-error= error_msg
+      
+    form(action='/', method='post')
+      input(id='email',type='text',placeholder='Email address',name='email')
+      br
+      input(id='password',type='password',placeholder='Password',name='password')
+      br
+      input.btn.btn-primary(type='submit',value='Login',data-transition='fade', data-theme='c')
+      a.btn.btn-success(href="/users") Register

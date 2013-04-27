@@ -1,0 +1,34 @@
+extends ../layout
+
+block content
+	div.container
+		h1= title
+
+		table.table
+			thead
+				tr
+					th Item
+					th Price
+					th Image
+			tbody
+				each grocery in groceries
+					tr
+						td #{grocery.get('name').value}
+						td #{grocery.get('price').value}
+						td: img(src='#{grocery.get('image').value}', height='100px', width='100px')
+
+		form(action='/groceries', method='post')
+		input(id='_method', type='hidden', name='_method', value='delete')
+		br
+		input.btn.btn-danger(type='submit',value='Delete All Items',data-transition='fade', data-theme='c')
+
+		br
+		br
+
+		h2 Add a new item
+		form(action='/groceries', method='post')
+			input(id='name',type='text',placeholder='Item name',name='name')
+			input(id='price',type='text',placeholder='Price',name='price')
+			input(id='image',type='text',placeholder='Image URL',name='image')
+			br
+			input.btn.btn-primary(type='submit',value='Submit',data-transition='fade', data-theme='c')
