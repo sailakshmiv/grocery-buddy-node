@@ -15,8 +15,32 @@ Make sure you have nodejs and npm (comes with nodejs) installed.
 	cd grocery-buddy/
 	npm install
 
-### Set up the schema
+### Start a Cassandra shell
 
-	cqlsh --cql3
+	cassandra-cli
 
-	run cqlsh --cql3
+### Create the keyspace
+
+	CREATE KEYSPACE GroceryBuddy 
+	WITH REPLICATION = {
+		'class' : 'SimpleStrategy',
+		'replication_factor' : 3
+	};
+
+### Switch to the new keyspace
+
+	USE GroceryBuddy;
+
+### Create all the column families (tables) we need
+
+	CREATE TABLE users (user_id uuid, email text, password text, PRIMARY KEY (user_id));
+	CREATE TABLE usernames (email text, user_id uuid, PRIMARY KEY (email));
+	CREATE TABLE groceries (item_id uuid, name text, price text, image text, user_id uuid, PRIMARY KEY (item_id));
+	CREATE TABLE userlists (user_id uuid, item_id uuid, PRIMARY KEY (user_id, item_id));
+
+## Supported functionalities
+
+* User registration
+* User login authentication and logout
+* Add grocery items to your list (with images, pulled from URL)
+* Delete all grocery items from list
