@@ -4,20 +4,36 @@ An app to manage your grocery list! Written using nodejs with an apache cassandr
 
 ## Installation
 
+### From a base Ubuntu system
+
+	sudo apt-get update
+	sudo apt-get install g++ curl libssl-dev apache2-utils git-core make
+	
+### Add the following to /etc/apt/sources.list.d/cassandra.sources.list
+
+	deb http://debian.datastax.com/community stable main
+
+### Then run
+
+	curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+	sudo apt-get update && sudo apt-get install dsc12
+
 ### Clone this repo
 
 	git clone git@github.com:jaredculp/grocery-buddy-node.git
 
-Make sure you have nodejs and npm (comes with nodejs) installed.
+### Install node and npm using this script from https://gist.github.com/isaacs/579814
 
-### Install dependencies, make sure you run as root
+	./install.sh
+
+### Install dependencies for node modules
 
 	cd grocery-buddy/
 	npm install
 
 ### Start a Cassandra shell
 
-	cassandra-cli
+	cqlsh --cql3
 
 ### Create the keyspace
 
@@ -37,6 +53,16 @@ Make sure you have nodejs and npm (comes with nodejs) installed.
 	CREATE TABLE usernames (email text, user_id uuid, PRIMARY KEY (email));
 	CREATE TABLE groceries (item_id uuid, name text, price text, image text, user_id uuid, PRIMARY KEY (item_id));
 	CREATE TABLE userlists (user_id uuid, item_id uuid, PRIMARY KEY (user_id, item_id));
+
+## Running Grocery-Buddy
+
+### Start a local node server
+
+	node app.js
+
+### Then simply hit this address in your browser
+
+	localhost:3000
 
 ## Supported functionalities
 
