@@ -2,6 +2,8 @@
 
 An app to manage your grocery list! Written using nodejs with an apache cassandra backend. Utilizes express web framework for minimalistic routing.
 
+This app was written for CS 4501 "Cloud Computing" at the University of Virginia, Spring 2013.
+
 ## Installation
 
 ### From a base Ubuntu system
