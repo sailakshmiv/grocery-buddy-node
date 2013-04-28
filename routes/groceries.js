@@ -5,6 +5,8 @@ exports.index = function(req, res, next){
 
 	var select = "SELECT item_id FROM Userlists WHERE user_id=" + req.app.get('user_id');
 
+	console.log(select);
+
 	req.app.get('cassandra').cql(select, function(err, rows){
 		if(err){
 			next(err);
@@ -18,6 +20,14 @@ exports.index = function(req, res, next){
 					//all column of row
 					items.push(value);
 				});
+			});
+		}
+
+		// if list is empty we don't want to do the next query
+		else {
+			res.render('groceries/index', { 
+				title: 'Groceries for ' + req.app.get('user_email'),
+				groceries: undefined
 			});
 		}
 
