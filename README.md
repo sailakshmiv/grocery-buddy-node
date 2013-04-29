@@ -24,9 +24,12 @@ This app was written for CS 4501 "Cloud Computing" at the University of Virginia
 
 	git clone git@github.com:jaredculp/grocery-buddy-node.git
 
-### Install node and npm using this script from https://gist.github.com/isaacs/579814
+### Install node and npm
 
-	./install.sh
+	sudo apt-get install python-software-properties python g++ make
+	sudo add-apt-repository ppa:chris-lea/node.js
+	sudo apt-get update
+	sudo apt-get install nodejs
 
 ### Install dependencies for node modules
 
