@@ -9,9 +9,7 @@ var app = express();
 
 var helenus = require('helenus'),
 pool = new helenus.ConnectionPool({
-    hosts      : ['ec2-75-101-203-249.compute-1.amazonaws.com:9160',
-                  'ec2-23-20-99-179.compute-1.amazonaws.com:9160',
-                  'ec2-23-20-171-54.compute-1.amazonaws.com:9160'],
+    hosts      : ['localhost:9042'],
     keyspace   : 'grocerybuddy',
     cqlVersion : '3.0.0'
 }),
